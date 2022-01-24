@@ -24,3 +24,9 @@ This project was created to study game hacking with python.
 - Have fun!
 
 For further help have a look at the instructions.txt
+
+# Credits
+
+- https://github.com/XanOpiat for the installer and skin changer
+- Guided hacking (https://guidedhacking.com/)
+- Unknown Cheats
