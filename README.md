@@ -16,9 +16,10 @@ This project was created to study game hacking with python.
 
 - Download the zip from this repository
 - Extract the zip
-- Install Python 3.8 (https://www.python.org/downloads/)
-- navigate the terminal to the directory of the cheat
-- run installer: type python installer.py 
+- Install Python 3.8 (https://www.python.org/downloads/) and check the box Add Python 3.8 to PATH
+- open the windows command prompt
+- navigate the windows command prompt to the path of the cheat folder typing cd "folder path"
+- run installer: type python installer.py and follow instructions 
 - run cheat: type python csgo.py
 - run csgo
 - Have fun!
