@@ -1,0 +1,24 @@
+###########################
+## CSGO CHEAT by YaMaSei ##
+## ########################
+
+run cheat:
+
+- python 3.8+ required
+- navigate the terminal to the directory of the cheat
+- run installer: type python installer.py 
+- run cheat: type python csgo.py 
+
+Key binds:
+
+terminate: 		press <End>
+toggle walls:		press <+>
+deactivate aim lock:	press <f1>
+aim lock:		press <Alt>
+no flash:		always active
+
+skin changer:
+
+- look up skin ID (https://github.com/adamb70/CSGO-skin-ID-dumper/blob/master/item_index.txt)
+- set skins in skins.txt
+
