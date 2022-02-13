@@ -1,40 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Dec 21 20:36:10 2021
+Created on Fri Feb 11 17:28:32 2022
 
-@author: YaMaSei 
-@netvars: https://github.com/frk1/hazedumper
+@author: Yannic
 """
-import pymem
-import time
-import re
 
-csgo_running = False
-
-while not csgo_running:
-    try:
-        pm = pymem.Pymem( "csgo.exe" )
-        client = pymem.process.module_from_name(pm.process_handle, "client.dll").lpBaseOfDll
-        engine = pymem.process.module_from_name(pm.process_handle, "engine.dll").lpBaseOfDll
-        csgo_running = True
-    except Exception:
-        print("Waiting for csgo.exe ...")
-        time.sleep(5)
-        continue
-
-def getSig(modname, pattern, offset=0, extra=0, relative=True, default= 0x0):
-    try:
-        pm = pymem.Pymem("csgo.exe")
-        module = pymem.process.module_from_name(pm.process_handle, modname)
-        bytes = pm.read_bytes(module.lpBaseOfDll, module.SizeOfImage)
-        match = re.search(pattern, bytes).start()
-        non_relative = pm.read_int(module.lpBaseOfDll + match + offset) + extra
-        yes_relative = pm.read_int(module.lpBaseOfDll + match + offset) + extra - module.lpBaseOfDll
-        return "0x{:X}".format(yes_relative) if relative else "0x{:X}".format(non_relative)
-    except Exception:
-        return default
-
-## netvars
+# netvars
 
 cs_gamerules_data = 0x0;
 m_ArmorValue = 0x117CC;
@@ -130,67 +101,62 @@ m_vecViewOffset = 0x108;
 m_viewPunchAngle = 0x3030;
 m_zoomLevel = 0x33E0;
 
-## Signatures
+# sigantures
 
+anim_overlays = 0x2990;
+clientstate_choked_commands = 0x4D30;
+clientstate_delta_ticks = 0x174;
+clientstate_last_outgoing_command = 0x4D2C;
+clientstate_net_channel = 0x9C;
+convar_name_hash_table = 0x2F0F8;
+dwClientState = 0x58BFC4;
+dwClientState_GetLocalPlayer = 0x180;
+dwClientState_IsHLTV = 0x4D48;
+dwClientState_Map = 0x28C;
+dwClientState_MapDirectory = 0x188;
+dwClientState_MaxPlayer = 0x388;
+dwClientState_PlayerInfo = 0x52C0;
+dwClientState_State = 0x108;
+dwClientState_ViewAngles = 0x4D90;
+dwEntityList = 0x4DCEB7C;
+dwForceAttack = 0x31FF054;
+dwForceAttack2 = 0x31FF078;
+dwForceBackward = 0x31FF0A8;
+dwForceForward = 0x31FF09C;
+dwForceJump = 0x52789F8;
+dwForceLeft = 0x31FF0B4;
+dwForceRight = 0x31FF0C0;
+dwGameDir = 0x62A880;
+dwGameRulesProxy = 0x52EBA5C;
+dwGetAllClasses = 0xDDCF2C;
+dwGlobalVars = 0x58BCC8;
+dwGlowObjectManager = 0x5316E98;
+dwInput = 0x5220150;
+dwInterfaceLinkList = 0x966044;
+dwLocalPlayer = 0xDB35EC;
+dwMouseEnable = 0xDB92F8;
+dwMouseEnablePtr = 0xDB92C8;
+dwPlayerResource = 0x31FD3E0;
+dwRadarBase = 0x52038F4;
+dwSensitivity = 0xDB9194;
+dwSensitivityPtr = 0xDB9168;
 dwSetClanTag = 0x8A290;
+dwViewMatrix = 0x4DC0494;
+dwWeaponTable = 0x5220C18;
+dwWeaponTableIndex = 0x326C;
+dwYawPtr = 0xDB8F58;
+dwZoomSensitivityRatioPtr = 0xDBEF60;
 dwbSendPackets = 0xD93D2;
-is_c4_owner = 0x3C5890;
-set_abs_angles = 0x1E5010;
-set_abs_origin = 0x1E4E50;
-
-## Sig scanning
-
-print("scanning signatures ...")
-
-anim_overlays = int(getSig("client.dll", rb'\x8B\x89....\x8D\x0C\xD1',2,0,False,hex(0x2990)),0)
-clientstate_choked_commands = int(getSig("engine.dll", rb'\x8B\x87....\x41',2,0,False,hex(0x4D30)),0)
-clientstate_delta_ticks = int(getSig("engine.dll", rb'\xC7\x87........\xFF\x15....\x83\xC4\x08',2,0,False,hex(0x174)),0)
-clientstate_last_outgoing_command = int(getSig("engine.dll", rb'\x8B\x8F....\x8B\x87....\x41',2,0,False,hex(0x4D2C)),0)
-clientstate_net_channel = int(getSig("engine.dll", rb'\x8B\x8F....\x8B\x01\x8B\x40\x18',2,0,False,hex(0x9C)),0)
-convar_name_hash_table = int(getSig("vstdlib.dll", rb'\x8B\x3C\x85',3,0,True,hex(0x2F0F8)),0)
-dwClientState = int(getSig("engine.dll", rb'\xA1....\x33\xD2\x6A\x00\x6A\x00\x33\xC9\x89\xB0',1,0,True,hex(0x589FC4)),0)
-dwClientState_GetLocalPlayer = int(getSig("engine.dll", rb'\x8B\x80....\x40\xC3',2,0,False,hex(0x180)),0)
-dwClientState_IsHLTV = int(getSig("engine.dll", rb'\x80\xBF.....\x0F\x84....\x32\xDB',2,0,False,hex(0x4D48)),0)
-dwClientState_Map = int(getSig("engine.dll", rb'\x05....\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xA1',1,0,False,hex(0x28C)),0)
-dwClientState_MapDirectory = int(getSig("engine.dll", rb'\xB8....\xC3\x05....\xC3',7,0,False,hex(0x188)),0)
-dwClientState_MaxPlayer = int(getSig("engine.dll", rb'\xA1....\x8B\x80....\xC3\xCC\xCC\xCC\xCC\x55\x8B\xEC\x8A\x45\x08',7,0,False,hex(0x388)),0)
-dwClientState_PlayerInfo = int(getSig("engine.dll", rb'\x8B\x89....\x85\xC9\x0F\x84....\x8B\x01',2,0,False,hex(0x52C0)),0)
-dwClientState_State = int(getSig("engine.dll", rb'\x83\xB8.....\x0F\x94\xC0\xC3',2,0,False,hex(0x108)),0)
-dwClientState_ViewAngles = int(getSig("engine.dll", rb'\xF3\x0F\x11\x86....\xF3\x0F\x10\x44\x24.\xF3\x0F\x11\x86',4,0,False,hex(0x4D90)),0)
-dwEntityList = int(getSig("client.dll", rb'\xBB....\x83\xFF\x01\x0F\x8C....\x3B\xF8',1,0,True,hex(0x4DD1E1C)),0)
-dwForceAttack = int(getSig("client.dll", rb'\x89\x0D....\x8B\x0D....\x8B\xF2\x8B\xC1\x83\xCE\x04',2,0,True,hex(0x32022D0)),0)
-dwForceAttack2 = int(getSig("client.dll", rb'\x89\x0D....\x8B\x0D\x8B\xF2\x8B\xC1\x83\xCE\x04',2,36,True,hex(0x32022F4)),0)
-dwForceBackward = int(getSig("client.dll", rb'\x55\x8B\xEC\x51\x53\x8A\x5D\x08',287,0,True,hex(0x320230C)),0)
-dwForceForward = int(getSig("client.dll", rb'\x55\x8B\xEC\x51\x53\x8A\x5D\x08',245,0,True,hex(0x3202300)),0)
-dwForceJump = int(getSig("client.dll", rb'\x8B\x0D....\x8B\xD6\x8B\xC1\x83\xCA\x02',2,0,True,hex(0x527BC98)),0)
-dwForceLeft = int(getSig("client.dll", rb'\x55\x8B\xEC\x51\x53\x8A\x5D\x08',465,0,True,hex(0x3202318)),0)
-dwForceRight = int(getSig("client.dll", rb'\x55\x8B\xEC\x51\x53\x8A\x5D\x08',512,0,True,hex(0x3202324)),0)
-dwGameDir = int(getSig("engine.dll", rb'\x68....\x8D\x85....\x50\x68....\x68',1,0,True,hex(0x628700)),0)
-dwGameRulesProxy = int(getSig("client.dll", rb'\xA1....\x85\xC0\x0F\x84....\x80\xB8.....\x74\x7A',1,0,True,hex(0x52EECFC)),0)
-dwGetAllClasses = int(getSig("client.dll", rb'\xA1....\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xA1....\xB9',1,0,True,hex(0xDDFBFC)),0)
-dwGlobalVars = int(getSig("engine.dll", rb'\x68....\x68....\xFF\x50\x08\x85\xC0',1,0,True,hex(0x589CC8)),0)
-dwGlowObjectManager = int(getSig("client.dll", rb'\xA1\xA8\x01\x75\x4B',1,4,True,hex(0x531A118)),0)
-dwInput = int(getSig("client.dll", rb'\xB9....\xF3\x0F\x11\x04\x24\xFF\x50\x10',1,0,True,hex(0x52233F0)),0)
-dwLocalPlayer = int(getSig("client.dll", rb'\x8D\x34\x85....\x89\x15....\x8B\x41\x08\x8B\x48\x04\x83\xF9\xFF',3,4,True,hex(0xDB65EC)),0)
-dwMouseEnable = int(getSig("client.dll", rb'\xB9....\xFF\x50\x34\x85\xC0\x75\x10',1,48,True,hex(0xDBC288)),0)
-dwMouseEnablePtr = int(getSig("client.dll", rb'\xB9....\xFF\x50\x34\x85\xC0\x75\x10',1,0,True,hex(0xDBC258)),0)
-dwPlayerResource = int(getSig("client.dll", rb'\x8B\x3D....\x85\xFF\x0F\x84....\x81\xC7',2,0,True,hex(0x3200680)),0)
-dwRadarBase = int(getSig("client.dll", rb'\xA1....\x8B\x0C\xB0\x8B\x01\xFF\x50.\x46\x3B\x35....\x7C\xEA\x8B\x0D',1,0,True,hex(0x5206B94)),0)
-dwSensitivity = int(getSig("client.dll", rb'\x81\xF9....\x75\x1D\xF3\x0F\x10\x05....\xF3\x0F\x11\x44\x24.8B\x44\x24\x0C\x35....\x89\x44\x24\x0C',2,44,True,hex(0xDBC124)),0)
-dwSensitivityPtr = int(getSig("client.dll", rb'\x81\xF9....\x75\x1D\xF3\x0F\x10\x05....\xF3\x0F\x11\x44\x24.8B\x44\x24\x0C\x35....\x89\x44\x24\x0C',2,0,True,hex(0xDBC0F8)),0)
-dwViewMatrix = int(getSig("client.dll", rb'\x0F\x10\x05....\x8D\x85....\xB9',3,176,True,hex(0x4DC3734)),0)
-dwWeaponTable = int(getSig("client.dll", rb'\xB9....\x6A\x00\xFF\x50\x08\xC3',1,0,True,hex(0x5223EB8)),0)
-dwWeaponTableIndex = int(getSig("client.dll", rb'\x39\x86....\x74\x06\x89\x86....\x8B\x86',2,0,False,hex(0x326C)),0)
-dwYawPtr = int(getSig("client.dll", rb'\x81\xF9....\x75\x16\xF3\x0F\x10\x05....\xF3\x0F\x11\x45.\x81\x75.....\xEB\x0A\x8B\x01\x8B\x40\x30\xFF\xD0\xD9\x5D\x0C\x8B\x55\x08',2,0,True,hex(0xDBBEE8)),0)
-dwZoomSensitivityRatioPtr = int(getSig("client.dll", rb'\x81\xF9....\x75\x1A\xF3\x0F\x10\x05....\xF3\x0F\x11\x45.\x8B\x45\xF4\x35....\x89\x45\xFC\xEB\x0A\x8B\x01\x8B\x40\x30\xFF\xD0\xD9\x5D\xFC\xA1',2,0,True,hex(0xDC1D38)),0)
-dwppDirect3DDevice9 = int(getSig("shaderapidx9.dll", rb'\xA1....\x50\x8B\x08\xFF\x51\x0C',1,0,True,hex(0xA5050)),0)
-find_hud_element = int(getSig("client.dll", rb'\x55\x8B\xEC\x53\x8B\x5D\x08\x56\x57\x8B\xF9\x33\xF6\x39\x77\x28',0,0,False,hex(0x2A434760)),0)
-interface_engine_cvar = int(getSig("vstdlib.dll", rb'\x8B\x0D....\xC7\x05',2,0,True,hex(0x3E9EC)),0)
-m_bDormant = int(getSig("client.dll", rb'\x8A\x81....\xC3\x32\xC0',2,8,False,hex(0xED)),0)
-m_flSpawnTime = int(getSig("client.dll", rb'\x89\x86....\xE8....\x80\xBE.....',2,0,False,hex(0x103C0)),0)
-m_pStudioHdr = int(getSig("client.dll", rb'\x8B\xB6....\x85\xF6\x74\x05\x83\x3E\x00\x75\x02\x33\xF6\xF3\x0F\x10\x44\x24',2,0,False,hex(0x2950)),0)
-m_pitchClassPtr = int(getSig("client.dll", rb'\xA1....\x89\x74\x24\x28',1,0,True,hex(0x5206E30)),0)
-m_yawClassPtr = int(getSig("client.dll", rb'\x81\xF9....\x75\x16\xF3\x0F\x10\x05....\xF3\x0F\x11\x45.\x81\x75.....\xEB\x0A\x8B\x01\x8B\x40\x30\xFF\xD0\xD9\x5D\x0C\x8B\x55\x08',2,0,True,hex(0xDBBEE8)),0)
-model_ambient_min = int(getSig("engine.dll", rb'\xF3\x0F\x10\x0D....\xF3\x0F\x11\x4C\x24.\x8B\x44\x24\x20\x35....\x89\x44\x24\x0C',4,0,True,hex(0x58D03C)),0)
-
-print("offsets updated")
+dwppDirect3DDevice9 = 0xA5050;
+find_hud_element = 0x517C48A0;
+force_update_spectator_glow = 0x3BA6CA;
+interface_engine_cvar = 0x3E9EC;
+is_c4_owner = 0x3C76A0;
+m_bDormant = 0xED;
+m_flSpawnTime = 0x103C0;
+m_pStudioHdr = 0x2950;
+m_pitchClassPtr = 0x5203B90;
+m_yawClassPtr = 0xDB8F58;
+model_ambient_min = 0x58F03C;
+set_abs_angles = 0x1E51E0;
+set_abs_origin = 0x1E5020;
