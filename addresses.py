@@ -2,7 +2,7 @@
 """
 Created on Fri Feb 11 17:28:32 2022
 
-@author: Yannic
+@author: YaMaSei
 """
 
 # netvars
@@ -100,7 +100,7 @@ m_vecVelocity = 0x114;
 m_vecViewOffset = 0x108;
 m_viewPunchAngle = 0x3030;
 m_zoomLevel = 0x33E0;
-        
+
 # signatures
 
 anim_overlays = 0x2990;
@@ -118,45 +118,45 @@ dwClientState_MaxPlayer = 0x388;
 dwClientState_PlayerInfo = 0x52C0;
 dwClientState_State = 0x108;
 dwClientState_ViewAngles = 0x4D90;
-dwEntityList = 0x4DD0E5C;
-dwForceAttack = 0x3201310;
-dwForceAttack2 = 0x320131C;
-dwForceBackward = 0x320134C;
-dwForceForward = 0x3201340;
-dwForceJump = 0x527AD80;
-dwForceLeft = 0x3201358;
-dwForceRight = 0x3201364;
+dwEntityList = 0x4DCEEAC;
+dwForceAttack = 0x31FF3C0;
+dwForceAttack2 = 0x31FF3CC;
+dwForceBackward = 0x31FF36C;
+dwForceForward = 0x31FF3F0;
+dwForceJump = 0x5278DDC;
+dwForceLeft = 0x31FF378;
+dwForceRight = 0x31FF384;
 dwGameDir = 0x62B880;
-dwGameRulesProxy = 0x52EDDDC;
-dwGetAllClasses = 0xDDF17C;
+dwGameRulesProxy = 0x52EBE3C;
+dwGetAllClasses = 0xDDD1D4;
 dwGlobalVars = 0x58CCC8;
-dwGlowObjectManager = 0x5319278;
-dwInput = 0x5222430;
-dwInterfaceLinkList = 0x967FB4;
-dwLocalPlayer = 0xDB55DC;
-dwMouseEnable = 0xDBB2E8;
-dwMouseEnablePtr = 0xDBB2B8;
-dwPlayerResource = 0x31FF6C0;
-dwRadarBase = 0x5205BD4;
-dwSensitivity = 0xDBB184;
-dwSensitivityPtr = 0xDBB158;
-dwSetClanTag = 0x8A340;
-dwViewMatrix = 0x4DC2774;
-dwWeaponTable = 0x5222EF8;
+dwGlowObjectManager = 0x5317308;
+dwInput = 0x5220480;
+dwInterfaceLinkList = 0x965464;
+dwLocalPlayer = 0xDB35DC;
+dwMouseEnable = 0xDB92E8;
+dwMouseEnablePtr = 0xDB92B8;
+dwPlayerResource = 0x31FD710;
+dwRadarBase = 0x5203C24;
+dwSensitivity = 0xDB9184;
+dwSensitivityPtr = 0xDB9158;
+dwSetClanTag = 0x8A320;
+dwViewMatrix = 0x4DC07C4;
+dwWeaponTable = 0x5220F48;
 dwWeaponTableIndex = 0x326C;
-dwYawPtr = 0xDBAF48;
-dwZoomSensitivityRatioPtr = 0xDC1158;
-dwbSendPackets = 0xD94C2;
+dwYawPtr = 0xDB8F48;
+dwZoomSensitivityRatioPtr = 0xDBF1B0;
+dwbSendPackets = 0xD9542;
 dwppDirect3DDevice9 = 0xA5050;
-find_hud_element = 0x271649F0;
-force_update_spectator_glow = 0x3BB05A;
+find_hud_element = 0x2C8D50F0;
+force_update_spectator_glow = 0x3BB80A;
 interface_engine_cvar = 0x3E9EC;
-is_c4_owner = 0x3C8110;
+is_c4_owner = 0x3C8890;
 m_bDormant = 0xED;
 m_flSpawnTime = 0x103C0;
 m_pStudioHdr = 0x2950;
-m_pitchClassPtr = 0x5205E70;
-m_yawClassPtr = 0xDBAF48;
+m_pitchClassPtr = 0x5203EC0;
+m_yawClassPtr = 0xDB8F48;
 model_ambient_min = 0x59003C;
-set_abs_angles = 0x1E5330;
-set_abs_origin = 0x1E5170;
+set_abs_angles = 0x1E5430;
+set_abs_origin = 0x1E5270;
