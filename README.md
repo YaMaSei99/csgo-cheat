@@ -1,9 +1,9 @@
 # External python csgo cheat
 
+![skins](https://user-images.githubusercontent.com/85324641/175700534-8edeb3e1-c9bb-4f47-9e76-92f5a5688bd8.png)
+
 Compact external cheat written in python. It is not detected by Vac but it should only be run in insecure mode against bots for educational purposes only.
 I am not responsible for any future Vac or overwatch bans. Usage at your own risk! 
-
-
 
 # Features
 
