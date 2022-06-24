@@ -7,30 +7,30 @@ Created on Thu Dec  9 21:48:44 2021
 import pymem
 import sys
 import os
+import argparse
+import distutils.util
 import numpy as np
 import time
 import keyboard as kb
 import addresses as ad
-import Skinchanger as sc
+import KnifeChanger as kc
 
 from threading import Thread, Lock
 from pynput.keyboard import Key, Controller, Listener
 from win32api import GetSystemMetrics
+
+parser = argparse.ArgumentParser(description='Cheat arguments')
+parser.add_argument('--esp','-esp', type=distutils.util.strtobool, default='true')
+parser.add_argument('--aim','-aim', type=distutils.util.strtobool, default='true')
+args = parser.parse_args()
 
     
 keyboard = Controller()
 
 ## global vars
 
-if len(sys.argv) <= 1:
-    SCREEN_WIDTH = GetSystemMetrics(0)
-    SCREEN_HEIGHT = GetSystemMetrics(1)
-else:
-    SCREEN_WIDTH = int(sys.argv[1])
-    SCREEN_HEIGHT = int(sys.argv[2])
-
-print("Resolution: {} * {}".format(SCREEN_WIDTH,SCREEN_HEIGHT))
-
+SCREEN_WIDTH = GetSystemMetrics(0)
+SCREEN_HEIGHT = GetSystemMetrics(1)
 deltaT = 0.010
 counter_start = 0
 fullTrigger = True
@@ -42,6 +42,8 @@ head = None
 enemies = None
 angles = None
 csgo_running = False
+aim = bool(args.aim)
+esp = bool(args.esp)
 
 while not csgo_running:
     try:
@@ -63,6 +65,7 @@ angles_lock = Lock()
 wall_on_lock = Lock()
 fullTrigger_lock = Lock()
 
+## methods
 
 def on_press(key):
     if key == Key.end:
@@ -289,7 +292,6 @@ def Esp(e_lock, w_lock):
     global counter_start
     global wall_on
     
-    print("esp active")
     counter_start = 0
     
     while True:
@@ -336,8 +338,6 @@ def AimLock (angles_lock, fullTrigger_lock):
     global angles
     global fullTrigger
     
-    print("aimbot active")
-    
     player = pm.read_uint(int(client + ad.dwLocalPlayer))
     
     while True:
@@ -348,7 +348,7 @@ def AimLock (angles_lock, fullTrigger_lock):
             if fullTrigger:
                 angles_lock.acquire()
                 if not angles is None:
-                    AutoStop(player, client, engine_pointer)
+                    SetVelocity(np.zeros(3), player)
                     WriteViewAngles(angles[0], angles[1], engine_pointer)
                 angles_lock.release()
             fullTrigger_lock.release()
@@ -389,14 +389,23 @@ def BHop (player, client):
 
 def startThreads ():
     
+    os.system("cls")
+    print("\n"+ "###########################" + "\n" + "## CSGO CHEAT by YaMaSei ##" + "\n" + "###########################" + "\n")
+    
     ## Threads
     
     wallHack = Thread(name="ESP", target=Esp, args=(enemies_lock,wall_on_lock))
     aimBot = Thread(name="Aimbot", target=AimLock, args=(angles_lock, fullTrigger_lock))
-    skinChanger = Thread(name= "skinChanger", target=sc.change_skin, args=())
-    wallHack.start()
-    aimBot.start()
+    skinChanger = Thread(name= "knifeChanger", target=kc.changeKnife, args=())
+    
+    if esp:
+        wallHack.start()
+        print("esp active")
+    if aim:
+        aimBot.start()
+        print("aimbot active")
     skinChanger.start()
+    print("knife/skin changer active")
 
 ## main
 
@@ -432,14 +441,12 @@ with Listener(on_press=on_press) as listener:
             enemies = GetEnemies(client, my_team)
             enemies_lock.release()
             closest = ClosestEnemyAlive(client, enemies)
-    
+
+            # auto bhop
             BHop(player, client)
     
             ## No flash
-            
             pm.write_float(player + ad.m_flFlashMaxAlpha, float(0))
-    
-            #skin_counter_start = ChangeSkin(player, client, engine, counterStart=skin_counter_start, deltaT=0)
     
             if GetHealth(player) <= 0 or closest is None:
                 head = None
@@ -482,7 +489,6 @@ with Listener(on_press=on_press) as listener:
              
         except Exception:
             continue
-    listener.join()
     
     
 

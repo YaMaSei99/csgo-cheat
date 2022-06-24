@@ -5,6 +5,10 @@ Created on Fri Feb 11 17:28:32 2022
 @author: YaMaSei
 """
 
+import time
+import pymem
+from Utils import get_sig
+
 # netvars
 
 cs_gamerules_data = 0x0;
@@ -101,62 +105,52 @@ m_vecViewOffset = 0x108;
 m_viewPunchAngle = 0x3030;
 m_zoomLevel = 0x33E0;
 
-# signatures
+# signatures 
 
-anim_overlays = 0x2990;
-clientstate_choked_commands = 0x4D30;
-clientstate_delta_ticks = 0x174;
-clientstate_last_outgoing_command = 0x4D2C;
-clientstate_net_channel = 0x9C;
-convar_name_hash_table = 0x2F0F8;
-dwClientState = 0x58BFDC;
-dwClientState_GetLocalPlayer = 0x180;
-dwClientState_IsHLTV = 0x4D48;
-dwClientState_Map = 0x28C;
-dwClientState_MapDirectory = 0x188;
-dwClientState_MaxPlayer = 0x388;
-dwClientState_PlayerInfo = 0x52C0;
-dwClientState_State = 0x108;
-dwClientState_ViewAngles = 0x4D90;
-dwEntityList = 0x4DD7AEC;
-dwForceAttack = 0x3207FE8;
-dwForceAttack2 = 0x3207FF4;
-dwForceBackward = 0x3208030;
-dwForceForward = 0x3208024;
-dwForceJump = 0x5281A34;
-dwForceLeft = 0x3207FA0;
-dwForceRight = 0x3207FAC;
-dwGameDir = 0x62A900;
-dwGameRulesProxy = 0x52F525C;
-dwGetAllClasses = 0xDE5DAC;
-dwGlobalVars = 0x58BCE0;
-dwGlowObjectManager = 0x53206F8;
-dwInput = 0x52290C0;
-dwInterfaceLinkList = 0x96C044;
-dwLocalPlayer = 0xDBB5CC;
-dwMouseEnable = 0xDC12D8;
-dwMouseEnablePtr = 0xDC12A8;
-dwPlayerResource = 0x3206350;
-dwRadarBase = 0x520C864;
-dwSensitivity = 0xDC1174;
-dwSensitivityPtr = 0xDC1148;
-dwSetClanTag = 0x8A320;
-dwViewMatrix = 0x4DC9404;
-dwWeaponTable = 0x5229B84;
-dwWeaponTableIndex = 0x326C;
-dwYawPtr = 0xDC0F38;
-dwZoomSensitivityRatioPtr = 0xDC7720;
-dwbSendPackets = 0xD82C2;
-dwppDirect3DDevice9 = 0xA5050;
-find_hud_element = 0x268E55B0;
-force_update_spectator_glow = 0x3BD3FA;
-interface_engine_cvar = 0x3E9EC;
-is_c4_owner = 0x3CA470;
-m_bDormant = 0xED;
-m_flSpawnTime = 0x103C0;
-m_pStudioHdr = 0x2950;
-m_pitchClassPtr = 0x520CB00;
-m_yawClassPtr = 0xDC0F38;
-model_ambient_min = 0x58F054;
-set_abs_angles = 0x1E5990;
-set_abs_origin = 0x1E57D0;
+csgo_running = False
+
+while not csgo_running:
+    try:
+        ## pymem
+        pm = pymem.Pymem("csgo.exe")
+        csgo_running = True
+    except Exception:
+        time.sleep(5)
+        continue
+
+dwLocalPlayer = get_sig(pm, "client.dll", pattern= rb'\x8D\x34\x85....\x89\x15....\x8B\x41\x08\x8B\x48\x04\x83\xF9\xFF', extra=4, offset=3, b_relative=True)
+print("dwLocalPlayer -> "+dwLocalPlayer)
+dwLocalPlayer = int(dwLocalPlayer,0)
+dwClientState = get_sig(pm, "engine.dll", pattern= rb'\xA1....\x33\xD2\x6A\x00\x6A\x00\x33\xC9\x89\xB0', extra=0, offset=1, b_relative=True)
+print("dwClientState -> "+dwClientState)
+dwClientState = int(dwClientState,0)
+dwClientState_ViewAngles = get_sig(pm, "engine.dll", pattern=rb'\xF3\x0F\x11\x86....\xF3\x0F\x10\x44\x24.\xF3\x0F\x11\x86', extra=0, offset=4, b_relative=False)
+print("dwClientState_ViewAngles -> "+dwClientState_ViewAngles)
+dwClientState_ViewAngles = int(dwClientState_ViewAngles,0)
+dwEntityList = get_sig(pm, "client.dll", pattern=rb'\xBB....\x83\xFF\x01\x0F\x8C....\x3B\xF8', extra=0, offset=1, b_relative=True)
+print("dwEntityList -> "+dwEntityList)
+dwEntityList = int(dwEntityList,0)
+dwForceBackward = get_sig(pm, "client.dll", pattern=rb'\x55\x8B\xEC\x51\x53\x8A\x5D\x08', extra=0, offset=287, b_relative=True)
+print("dwForceBackward -> "+dwForceBackward)
+dwForceBackward = int(dwForceBackward,0)
+dwForceForward = get_sig(pm, "client.dll", pattern=rb'\x55\x8B\xEC\x51\x53\x8A\x5D\x08', extra=0, offset=245, b_relative=True)
+print("dwForceForward -> "+dwForceForward)
+dwForceForward = int(dwForceForward,0)
+dwForceJump = get_sig(pm, "client.dll", pattern=rb'\x8B\x0D....\x8B\xD6\x8B\xC1\x83\xCA\x02', extra=0, offset=2, b_relative=True)
+print("dwForceJump -> "+dwForceJump)
+dwForceJump = int(dwForceJump,0)
+dwForceLeft = get_sig(pm, "client.dll", pattern=rb'\x55\x8B\xEC\x51\x53\x8A\x5D\x08', extra=0, offset=465, b_relative=True)
+print("dwForceLeft -> "+dwForceLeft)
+dwForceLeft = int(dwForceLeft,0)
+dwForceRight = get_sig(pm, "client.dll", pattern=rb'\x55\x8B\xEC\x51\x53\x8A\x5D\x08', extra=0, offset=512, b_relative=True)
+print("dwForceRight -> "+dwForceRight)
+dwForceRight = int(dwForceRight,0)
+dwGlowObjectManager = get_sig(pm, "client.dll", pattern=rb'\xA1....\xA8\x01\x75\x4B', extra=4, offset=1, b_relative=True)
+print("dwGlowObjectManager -> "+dwGlowObjectManager)
+dwGlowObjectManager = int(dwGlowObjectManager,0)
+dwViewMatrix = get_sig(pm, "client.dll", pattern=rb'\x0F\x10\x05....\x8D\x85....\xB9', extra=176, offset=3, b_relative=True)
+print("dwViewMatrix -> "+dwViewMatrix)
+dwViewMatrix = int(dwViewMatrix,0)
+m_bDormant = get_sig(pm, "client.dll", pattern=rb'\x8A\x81....\xC3\x32\xC0', extra=8, offset=2, b_relative=False)
+print("m_bDormant -> "+m_bDormant)
+m_bDormant = int(m_bDormant,0)

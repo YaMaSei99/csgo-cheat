@@ -1,24 +1,30 @@
 ###########################
 ## CSGO CHEAT by YaMaSei ##
-## ########################
+###########################
 
 run cheat:
 
 - python 3.8+ required
 - navigate the terminal to the directory of the cheat
 - run installer: type python installer.py 
-- run cheat: type python csgo.py 
+- run cheat: type python csgo.py
+- run with options: --esp, --aim
+  e.g. python csgo.py --esp=false --aim=false if you wish to only activate skin changer  
 
 Key binds:
 
 terminate: 		press <End>
 toggle walls:		press <+>
-deactivate aim lock:	press <f1>
 aim lock:		press <Alt>
-no flash:		always active
+aim lock on/off:	press <f1>
+bhop:			hold <Space>
+no flash:		always active (deactivate within code)
 
 skin changer:
 
-- look up skin ID (https://github.com/adamb70/CSGO-skin-ID-dumper/blob/master/item_index.txt)
-- set skins in skins.txt
+- look up skin ID in skins.txt
+- set skin in KnifeChanger.py
+- set knife model in KnifeChanger.py
+
+Have fun!
 
